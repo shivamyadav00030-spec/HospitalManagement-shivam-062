@@ -1,0 +1,15 @@
+@model BillIndexViewModel
+@{
+    ViewData["Title"] = "Billing";
+    var start = Model.Results.TotalCount == 0 ? 0 : ((Model.Results.Page - 1) * Model.Results.PageSize) + 1;
+    var end = Math.Min(Model.Results.Page * Model.Results.PageSize, Model.Results.TotalCount);
+    var routeValues = new Dictionary<string, string?> { ["search"] = Model.Search, ["status"] = Model.Status?.ToString() };
+}
+<div class="page-heading"><div><div class="eyebrow">Billing administration</div><h1>Bills</h1><p>Review educational invoice records and update their demonstration payment status.</p></div><a class="btn btn-primary" asp-action="Create">＋ Generate bill</a></div>
+<section class="panel">
+    <form method="get" class="filter-row mb-3"><div class="flex-grow-1"><label class="form-label" for="search">Search bill number or patient code</label><input class="form-control" id="search" name="search" value="@Model.Search" placeholder="BILL-… or PT-…" /></div><div><label class="form-label" for="status">Payment status</label><select class="form-select" id="status" name="status"><option value="">All statuses</option>@foreach (var status in Enum.GetValues<PaymentStatus>()) { <option value="@status" selected="@(Model.Status == status)">@status</option> }</select></div><button class="btn btn-outline-primary" type="submit">Apply</button>@if (Model.Search is not null || Model.Status.HasValue) { <a class="btn btn-light" asp-action="Index">Clear</a> }</form>
+    @if (Model.Results.TotalCount == 0) { <div class="empty-state"><div class="empty-mark">▤</div><h3>No billing records found</h3><p>Bills can be generated for completed appointments that do not already have an invoice.</p></div> }
+    else { <div class="text-muted-small mb-2">Showing @start–@end of @Model.Results.TotalCount records</div><div class="table-responsive"><table class="table align-middle"><thead><tr><th>Bill</th><th>Patient</th><th>Appointment</th><th>Bill date</th><th>Total (INR)</th><th>Payment status</th><th class="text-end">Action</th></tr></thead><tbody>
+    @foreach (var bill in Model.Results.Items) { <tr><td><span class="code-pill">@bill.BillNumber</span></td><td class="record-primary">@bill.PatientName</td><td>@(bill.AppointmentCode ?? "Administrative service")</td><td>@bill.BillDateLocal.ToString("dd MMM yyyy")</td><td class="fw-semibold">INR @bill.TotalAmount.ToString("N2")</td><td><span class="badge-status status-@bill.PaymentStatus.ToString().ToLowerInvariant()">@bill.PaymentStatus</span></td><td class="text-end"><a class="btn btn-sm btn-light" asp-action="Details" asp-route-id="@bill.BillId">View invoice</a></td></tr> }
+    </tbody></table></div>@await Html.PartialAsync("_Pager", new PagerViewModel { ControllerName = "Bills", Page = Model.Results.Page, TotalPages = Model.Results.TotalPages, RouteValues = routeValues }) }
+</section>

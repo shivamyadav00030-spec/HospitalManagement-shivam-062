@@ -1,0 +1,10 @@
+@model DepartmentDetailsViewModel
+@{
+    ViewData["Title"] = "Department details";
+    var department = Model.Department;
+}
+<div class="page-heading"><div><div class="eyebrow">Hospital directory</div><h1>@department.DepartmentName</h1><p>@(department.Description ?? "Department information")</p></div><div class="action-row"><a class="btn btn-outline-primary" asp-action="Edit" asp-route-id="@department.DepartmentId">Edit department</a><form asp-action="Delete" asp-route-id="@department.DepartmentId" method="post" data-confirm="Delete this department? Deletion is blocked while doctor or historical records reference it."><button class="btn btn-outline-danger" type="submit">Delete department</button></form></div></div>
+<section class="panel"><div class="panel-heading"><h2>Assigned doctors</h2><span class="text-muted-small">@Model.Doctors.Count doctor(s)</span></div>
+@if (Model.Doctors.Count == 0) { <div class="empty-state"><div class="empty-mark">✚</div><h3>No doctors assigned</h3><p>Doctors can be assigned to this department from their profile.</p></div> }
+else { <div class="table-responsive"><table class="table align-middle"><thead><tr><th>Doctor</th><th>Specialization</th><th>Consultation fee</th><th>Availability</th><th></th></tr></thead><tbody>@foreach (var doctor in Model.Doctors) { <tr><td><span class="record-primary">@doctor.FullName</span><span class="record-secondary">@doctor.DoctorCode</span></td><td>@doctor.Specialization</td><td>INR @doctor.ConsultationFee.ToString("N2")</td><td>@(doctor.IsAvailable ? "Available" : "Inactive")</td><td class="text-end"><a class="btn btn-sm btn-light" asp-controller="Doctors" asp-action="Details" asp-route-id="@doctor.DoctorId">View doctor</a></td></tr> }</tbody></table></div> }
+</section>

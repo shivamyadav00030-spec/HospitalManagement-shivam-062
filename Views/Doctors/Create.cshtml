@@ -1,0 +1,5 @@
+@model DoctorFormViewModel
+@{ ViewData["Title"] = "Add doctor"; }
+<div class="page-heading"><div><div class="eyebrow">Clinical directory</div><h1>Add doctor</h1><p>Doctor codes are generated automatically.</p></div><a class="btn btn-light" asp-action="Index">Back to doctors</a></div>
+<section class="panel"><form asp-action="Create" method="post"><partial name="_FormFields" model="Model" /><div class="action-row mt-4"><button class="btn btn-primary" type="submit">Save doctor</button><a class="btn btn-light" asp-action="Index">Cancel</a></div></form></section>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

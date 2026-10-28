@@ -1,0 +1,11 @@
+@model PatientFormViewModel
+<input asp-for="PatientId" type="hidden" />
+<div asp-validation-summary="ModelOnly" class="validation-summary-errors mb-3"></div>
+<div class="row g-3">
+    <div class="col-md-6"><label asp-for="FullName" class="form-label">Full name</label><input asp-for="FullName" class="form-control" autocomplete="name" /><span asp-validation-for="FullName" class="field-validation-error"></span></div>
+    <div class="col-md-6"><label asp-for="DateOfBirth" class="form-label">Date of birth</label><input asp-for="DateOfBirth" type="date" class="form-control" /><span asp-validation-for="DateOfBirth" class="field-validation-error"></span></div>
+    <div class="col-md-6"><label asp-for="Gender" class="form-label">Gender</label><select asp-for="Gender" class="form-select"><option value="">Select an option</option>@foreach (var gender in Model.GenderOptions) { <option value="@gender">@gender</option> }</select><span asp-validation-for="Gender" class="field-validation-error"></span></div>
+    <div class="col-md-6"><label asp-for="PhoneNumber" class="form-label">Phone number</label><input asp-for="PhoneNumber" class="form-control" autocomplete="tel" /><span asp-validation-for="PhoneNumber" class="field-validation-error"></span></div>
+    <div class="col-md-6"><label asp-for="Email" class="form-label">Email <span class="text-muted-small">(optional)</span></label><input asp-for="Email" type="email" class="form-control" autocomplete="email" /><span asp-validation-for="Email" class="field-validation-error"></span></div>
+    <div class="col-12"><label asp-for="Address" class="form-label">Address</label><textarea asp-for="Address" class="form-control" rows="3" autocomplete="street-address"></textarea><span asp-validation-for="Address" class="field-validation-error"></span></div>
+</div>

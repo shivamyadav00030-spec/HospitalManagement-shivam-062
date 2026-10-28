@@ -1,0 +1,14 @@
+bin/
+obj/
+.vs/
+.vscode/
+TestResults/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+secrets.json
+appsettings.*.local.json
+*.local.json
+.DS_Store
+Thumbs.db

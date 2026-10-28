@@ -1,0 +1,37 @@
+@model PagedResult<PatientListItemViewModel>
+@{
+    ViewData["Title"] = "Patients";
+    var start = Model.TotalCount == 0 ? 0 : ((Model.Page - 1) * Model.PageSize) + 1;
+    var end = Math.Min(Model.Page * Model.PageSize, Model.TotalCount);
+}
+<div class="page-heading">
+    <div><div class="eyebrow">Patient records</div><h1>Patients</h1><p>Register and maintain the hospital’s fictional demo patient records.</p></div>
+    <a class="btn btn-primary" asp-action="Create">＋ Register patient</a>
+</div>
+<section class="panel">
+    <form method="get" class="filter-row mb-3">
+        <div class="flex-grow-1"><label class="form-label" for="search">Search by patient code</label><input class="form-control" id="search" name="search" value="@Model.Search" placeholder="e.g. PT-8F04A21" /></div>
+        <button class="btn btn-outline-primary" type="submit">Search</button>
+        @if (!string.IsNullOrWhiteSpace(Model.Search)) { <a class="btn btn-light" asp-action="Index">Clear</a> }
+    </form>
+    @if (Model.TotalCount == 0)
+    {
+        <div class="empty-state"><div class="empty-mark">♙</div><h3>No patients found</h3><p>Register a fictional patient or try a different patient code.</p></div>
+    }
+    else
+    {
+        <div class="d-flex justify-content-between align-items-center mb-2"><span class="text-muted-small">Showing @start–@end of @Model.TotalCount records</span><span class="text-muted-small">Search uses patient code only</span></div>
+        <div class="table-responsive"><table class="table align-middle"><thead><tr><th>Patient</th><th>Phone</th><th>Email</th><th>Status</th><th class="text-end">Actions</th></tr></thead><tbody>
+        @foreach (var patient in Model.Items)
+        {
+            <tr>
+                <td><span class="record-primary">@patient.FullName</span><span class="record-secondary"><span class="code-pill">@patient.PatientCode</span></span></td>
+                <td>@patient.PhoneNumber</td><td>@(patient.Email ?? "—")</td>
+                <td><span class="badge-status @(patient.IsActive ? "status-active" : "status-inactive")">@(patient.IsActive ? "Active" : "Inactive")</span></td>
+                <td class="text-end"><a class="btn btn-sm btn-light" asp-action="Details" asp-route-id="@patient.PatientId">View</a> <a class="btn btn-sm btn-outline-primary" asp-action="Edit" asp-route-id="@patient.PatientId">Edit</a></td>
+            </tr>
+        }
+        </tbody></table></div>
+        @await Html.PartialAsync("_Pager", new PagerViewModel { ControllerName = "Patients", Page = Model.Page, TotalPages = Model.TotalPages, RouteValues = new Dictionary<string, string?> { ["search"] = Model.Search } })
+    }
+</section>

@@ -1,0 +1,32 @@
+@model AppointmentDetailsViewModel
+@{
+    ViewData["Title"] = "Appointment details";
+    var appt = Model.Appointment;
+}
+<div class="page-heading"><div><div class="eyebrow">Appointment record · <span class="code-pill">@appt.AppointmentCode</span></div><h1>Appointment details</h1><p>Review scheduling information and change the appointment status.</p></div><span class="badge-status status-@appt.Status.ToString().ToLowerInvariant()">@appt.Status</span></div>
+<div class="row g-3"><div class="col-lg-8"><section class="panel"><div class="panel-heading"><h2>Visit information</h2><span class="text-muted-small">All times @Model.TimeZoneName</span></div><dl class="detail-grid"><div class="detail-item"><dt>Patient</dt><dd>@appt.Patient?.FullName <span class="record-secondary">@appt.Patient?.PatientCode</span></dd></div><div class="detail-item"><dt>Doctor</dt><dd>@appt.Doctor?.FullName <span class="record-secondary">@appt.Doctor?.Department?.DepartmentName</span></dd></div><div class="detail-item"><dt>Date and time</dt><dd>@Model.AppointmentDateTimeLocal.ToString("dddd, dd MMMM yyyy · h:mm tt")</dd></div><div class="detail-item"><dt>Duration</dt><dd>30 minutes</dd></div><div class="detail-item"><dt>Status</dt><dd>@appt.Status</dd></div><div class="detail-item"><dt>Created</dt><dd>@appt.CreatedAtUtc.ToString("dd MMM yyyy, h:mm tt") UTC</dd></div><div class="detail-item"><dt>Administrative reason</dt><dd>@appt.ReasonForVisit</dd></div></dl></section></div>
+<div class="col-lg-4"><section class="panel"><h2 class="h6 fw-bold mb-3">Available actions</h2><div class="action-row mb-3">@if (appt.Status is AppointmentStatus.Scheduled or AppointmentStatus.Confirmed) { <a class="btn btn-outline-primary" asp-action="Reschedule" asp-route-id="@appt.AppointmentId">Reschedule</a> }</div>
+    @if (appt.Status == AppointmentStatus.Scheduled)
+    {
+        <div class="d-grid gap-2">
+            @if (Model.CanMarkCompleted)
+            {
+                <form asp-action="ChangeStatus" asp-route-id="@appt.AppointmentId" method="post"><input type="hidden" name="nextStatus" value="Completed" /><button class="btn btn-primary w-100" type="submit">Mark completed</button></form>
+            }
+            else
+            {
+                <form asp-action="ChangeStatus" asp-route-id="@appt.AppointmentId" method="post"><input type="hidden" name="nextStatus" value="Confirmed" /><button class="btn btn-primary w-100" type="submit">Confirm appointment</button></form>
+            }
+            <form asp-action="ChangeStatus" asp-route-id="@appt.AppointmentId" method="post" data-confirm="Cancel this appointment?"><input type="hidden" name="nextStatus" value="Cancelled" /><button class="btn btn-outline-danger w-100" type="submit">Cancel appointment</button></form>
+        </div>
+    }
+    else if (appt.Status == AppointmentStatus.Confirmed)
+    {
+        <div class="d-grid gap-2">
+            <form asp-action="ChangeStatus" asp-route-id="@appt.AppointmentId" method="post"><input type="hidden" name="nextStatus" value="Completed" /><button class="btn btn-primary w-100" type="submit">Mark completed</button></form>
+            <form asp-action="ChangeStatus" asp-route-id="@appt.AppointmentId" method="post" data-confirm="Cancel this appointment?"><input type="hidden" name="nextStatus" value="Cancelled" /><button class="btn btn-outline-danger w-100" type="submit">Cancel appointment</button></form>
+        </div>
+    }
+    else { <p class="text-muted-small mb-0">No further status changes are available.</p> }
+    <hr /><a class="text-muted-small" asp-action="Index">← Back to appointments</a>
+</section></div></div>

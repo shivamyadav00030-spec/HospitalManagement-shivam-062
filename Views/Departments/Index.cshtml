@@ -1,0 +1,18 @@
+@model PagedResult<DepartmentListItemViewModel>
+@{
+    ViewData["Title"] = "Departments";
+    var start = Model.TotalCount == 0 ? 0 : ((Model.Page - 1) * Model.PageSize) + 1;
+    var end = Math.Min(Model.Page * Model.PageSize, Model.TotalCount);
+}
+<div class="page-heading"><div><div class="eyebrow">Hospital directory</div><h1>Departments</h1><p>Organize doctors into hospital service departments.</p></div><a class="btn btn-primary" asp-action="Create">＋ Add department</a></div>
+<section class="panel">
+    <form method="get" class="filter-row mb-3"><div class="flex-grow-1"><label class="form-label" for="search">Search departments</label><input class="form-control" id="search" name="search" value="@Model.Search" placeholder="Department name" /></div><button class="btn btn-outline-primary" type="submit">Search</button>@if (!string.IsNullOrWhiteSpace(Model.Search)) { <a class="btn btn-light" asp-action="Index">Clear</a> }</form>
+    @if (Model.TotalCount == 0) { <div class="empty-state"><div class="empty-mark">▦</div><h3>No departments found</h3><p>Add a department or try a different name.</p></div> }
+    else {
+        <div class="text-muted-small mb-2">Showing @start–@end of @Model.TotalCount records</div>
+        <div class="table-responsive"><table class="table align-middle"><thead><tr><th>Department</th><th>Description</th><th>Doctors</th><th>Status</th><th class="text-end">Actions</th></tr></thead><tbody>
+        @foreach (var department in Model.Items) { <tr><td class="record-primary">@department.DepartmentName</td><td>@(department.Description ?? "—")</td><td>@department.DoctorCount</td><td><span class="badge-status @(department.IsActive ? "status-active" : "status-inactive")">@(department.IsActive ? "Active" : "Inactive")</span></td><td class="text-end"><a class="btn btn-sm btn-light" asp-action="Details" asp-route-id="@department.DepartmentId">View</a> <a class="btn btn-sm btn-outline-primary" asp-action="Edit" asp-route-id="@department.DepartmentId">Edit</a></td></tr> }
+        </tbody></table></div>
+        @await Html.PartialAsync("_Pager", new PagerViewModel { ControllerName = "Departments", Page = Model.Page, TotalPages = Model.TotalPages, RouteValues = new Dictionary<string, string?> { ["search"] = Model.Search } })
+    }
+</section>

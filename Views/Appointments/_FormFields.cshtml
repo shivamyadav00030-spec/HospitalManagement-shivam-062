@@ -1,0 +1,9 @@
+@model AppointmentFormViewModel
+<input asp-for="AppointmentId" type="hidden" />
+<div asp-validation-summary="ModelOnly" class="validation-summary-errors mb-3"></div>
+<div class="row g-3">
+    <div class="col-md-6"><label asp-for="PatientId" class="form-label">Registered patient</label><select asp-for="PatientId" class="form-select"><option value="">Select a patient</option>@foreach (var patient in Model.Patients) { <option value="@patient.Id">@patient.Label</option> }</select><span asp-validation-for="PatientId" class="field-validation-error"></span></div>
+    <div class="col-md-6"><label asp-for="DoctorId" class="form-label">Available doctor</label><select asp-for="DoctorId" class="form-select"><option value="">Select a doctor</option>@foreach (var doctor in Model.Doctors) { <option value="@doctor.Id">@doctor.Label</option> }</select><span asp-validation-for="DoctorId" class="field-validation-error"></span></div>
+    <div class="col-md-6"><label asp-for="AppointmentDateTimeLocal" class="form-label">Appointment date and time <span class="text-muted-small">(@Model.TimeZoneName)</span></label><input asp-for="AppointmentDateTimeLocal" type="datetime-local" class="form-control" step="1800" /><span asp-validation-for="AppointmentDateTimeLocal" class="field-validation-error"></span><div class="form-text">Bookings use 30-minute slots beginning on the hour or half-hour.</div></div>
+    <div class="col-12"><label asp-for="ReasonForVisit" class="form-label">Administrative reason for visit</label><textarea asp-for="ReasonForVisit" class="form-control" rows="3" placeholder="Fictional, non-clinical demo note"></textarea><span asp-validation-for="ReasonForVisit" class="field-validation-error"></span><div class="form-text">Use fictional demonstration text only. This field is not for diagnosis or treatment.</div></div>
+</div>

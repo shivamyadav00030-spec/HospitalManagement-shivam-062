@@ -1,0 +1,32 @@
+@model AppointmentIndexViewModel
+@{
+    ViewData["Title"] = "Appointments";
+    var filter = Model.Filter;
+    var routeValues = new Dictionary<string, string?> {
+        ["patientSearch"] = filter.PatientSearch, ["doctorId"] = filter.DoctorId?.ToString(),
+        ["date"] = filter.Date?.ToString("yyyy-MM-dd"), ["status"] = filter.Status?.ToString()
+    };
+    var start = Model.Results.TotalCount == 0 ? 0 : ((Model.Results.Page - 1) * Model.Results.PageSize) + 1;
+    var end = Math.Min(Model.Results.Page * Model.Results.PageSize, Model.Results.TotalCount);
+}
+<div class="page-heading"><div><div class="eyebrow">Scheduling</div><h1>Appointments</h1><p>Schedule, review and update the status of hospital visits.</p></div><a class="btn btn-primary" asp-action="Create">＋ Book appointment</a></div>
+<section class="panel mb-3"><div class="panel-heading"><h2>Search and filters</h2><span class="text-muted-small">Your non-sensitive filters are remembered for 30 minutes</span></div>
+    <form method="get" class="filter-row">
+        <div><label class="form-label" for="patientSearch">Patient code</label><input class="form-control" id="patientSearch" name="patientSearch" value="@filter.PatientSearch" placeholder="e.g. PT-8F04A21" /></div>
+        <div><label class="form-label" for="doctorId">Doctor</label><select class="form-select" id="doctorId" name="doctorId"><option value="">All doctors</option>@foreach (var doctor in Model.Doctors) { <option value="@doctor.Id" selected="@(filter.DoctorId == doctor.Id)">@doctor.Label</option> }</select></div>
+        <div><label class="form-label" for="date">Date</label><input class="form-control" id="date" name="date" type="date" value="@filter.Date?.ToString("yyyy-MM-dd")" /></div>
+        <div><label class="form-label" for="status">Status</label><select class="form-select" id="status" name="status"><option value="">All statuses</option>@foreach (var status in Enum.GetValues<AppointmentStatus>()) { <option value="@status" selected="@(filter.Status == status)">@status</option> }</select></div>
+        <button class="btn btn-outline-primary" type="submit">Apply</button><a class="btn btn-light" asp-action="Index" asp-route-clear="true">Clear filters</a>
+    </form>
+</section>
+<section class="panel">
+    <div class="panel-heading"><h2>Appointment history</h2><span class="text-muted-small">@Model.Results.TotalCount record(s)</span></div>
+    @if (Model.Results.TotalCount == 0) { <div class="empty-state"><div class="empty-mark">◷</div><h3>No matching appointments</h3><p>Book a new appointment or update the filters above.</p></div> }
+    else {
+        <div class="text-muted-small mb-2">Showing @start–@end of @Model.Results.TotalCount records</div>
+        <div class="table-responsive"><table class="table align-middle"><thead><tr><th>Appointment</th><th>Patient</th><th>Doctor / department</th><th>Date and time</th><th>Status</th><th class="text-end">Action</th></tr></thead><tbody>
+        @foreach (var item in Model.Results.Items) { <tr><td><span class="code-pill">@item.AppointmentCode</span></td><td><span class="record-primary">@item.PatientName</span><span class="record-secondary">@item.PatientCode</span></td><td><span class="record-primary">@item.DoctorName</span><span class="record-secondary">@item.DepartmentName</span></td><td>@item.AppointmentDateTimeLocal.ToString("dd MMM yyyy, h:mm tt") <span class="record-secondary">@Model.TimeZoneName</span></td><td><span class="badge-status status-@item.Status.ToString().ToLowerInvariant()">@item.Status</span></td><td class="text-end"><a class="btn btn-sm btn-light" asp-action="Details" asp-route-id="@item.AppointmentId">View</a></td></tr> }
+        </tbody></table></div>
+        @await Html.PartialAsync("_Pager", new PagerViewModel { ControllerName = "Appointments", Page = Model.Results.Page, TotalPages = Model.Results.TotalPages, RouteValues = routeValues })
+    }
+</section>

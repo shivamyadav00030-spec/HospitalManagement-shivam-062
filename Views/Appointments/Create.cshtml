@@ -1,0 +1,5 @@
+@model AppointmentFormViewModel
+@{ ViewData["Title"] = "Book appointment"; }
+<div class="page-heading"><div><div class="eyebrow">Scheduling</div><h1>Book appointment</h1><p>Choose an active patient, an available doctor and an open 30-minute slot.</p></div><a class="btn btn-light" asp-action="Index">Back to appointments</a></div>
+<section class="panel"><div class="soft-callout mb-4">Appointment times are entered and displayed in @Model.TimeZoneName, then stored in UTC. The database booking check locks the doctor record while checking for a conflict.</div><form asp-action="Create" method="post"><partial name="_FormFields" model="Model" /><div class="action-row mt-4"><button class="btn btn-primary" type="submit">Confirm booking</button><a class="btn btn-light" asp-action="Index">Cancel</a></div></form></section>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

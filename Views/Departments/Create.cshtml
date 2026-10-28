@@ -1,0 +1,5 @@
+@model DepartmentFormViewModel
+@{ ViewData["Title"] = "Add department"; }
+<div class="page-heading"><div><div class="eyebrow">Hospital directory</div><h1>Add department</h1><p>Department names must be unique.</p></div><a class="btn btn-light" asp-action="Index">Back to departments</a></div>
+<section class="panel"><form asp-action="Create" method="post"><partial name="_FormFields" model="Model" /><div class="action-row mt-4"><button class="btn btn-primary" type="submit">Save department</button><a class="btn btn-light" asp-action="Index">Cancel</a></div></form></section>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

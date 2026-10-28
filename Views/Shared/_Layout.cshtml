@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#102d3e" />
+    <title>@ViewData["Title"] - Hospital Management System</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/HospitalManagementSystem.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar" id="appSidebar">
+            <a class="brand" asp-controller="Home" asp-action="Index">
+                <span class="brand-mark">H</span><span><strong>CareDesk</strong><small>Hospital administration</small></span>
+            </a>
+            <div class="nav-caption">Workspace</div>
+            <nav class="side-nav" aria-label="Main navigation">
+                <a asp-controller="Home" asp-action="Index"><span class="nav-icon">⌂</span>Dashboard</a>
+                <a asp-controller="Patients" asp-action="Index"><span class="nav-icon">♙</span>Patients</a>
+                <a asp-controller="Doctors" asp-action="Index"><span class="nav-icon">✚</span>Doctors</a>
+                <a asp-controller="Departments" asp-action="Index"><span class="nav-icon">▦</span>Departments</a>
+                <a asp-controller="Appointments" asp-action="Index"><span class="nav-icon">◷</span>Appointments</a>
+                <a asp-controller="Bills" asp-action="Index"><span class="nav-icon">▤</span>Billing</a>
+            </nav>
+            <div class="sidebar-note"><span class="status-dot"></span><div><strong>Demo workspace</strong><small>Fictional records only</small></div></div>
+        </aside>
+
+        <div class="main-column">
+            <header class="topbar">
+                <button class="sidebar-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="appSidebar">☰</button>
+                <div class="topbar-label">Hospital Management System <span>·</span> Administration</div>
+                <div class="topbar-chip"><span class="online-dot"></span>Local demo</div>
+            </header>
+            <main class="page-content" role="main">
+                @if (TempData["Success"] is string success)
+                {
+                    <div class="alert alert-success alert-dismissible fade show" role="status">@success<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>
+                }
+                @if (TempData["Error"] is string error)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">@error<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>
+                }
+                @RenderBody()
+            </main>
+            <footer class="page-footer"><span>Hospital Management System · Educational administration demo</span><span>Appointment times use the configured local time zone</span></footer>
+        </div>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

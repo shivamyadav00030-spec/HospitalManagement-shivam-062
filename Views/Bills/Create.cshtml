@@ -1,0 +1,10 @@
+@model BillCreateViewModel
+@{ ViewData["Title"] = "Generate bill"; }
+<div class="page-heading"><div><div class="eyebrow">Billing administration</div><h1>Generate bill</h1><p>Create a one-time educational invoice from a completed appointment.</p></div><a class="btn btn-light" asp-action="Index">Back to bills</a></div>
+<section class="panel"><div class="soft-callout mb-4">This demonstration does not process payments or determine legal tax. The configured tax rate is @(Model.TaxRate.ToString("P2")); the default is 0% until your institution specifies a value for the project.</div><form asp-action="Create" method="post"><div asp-validation-summary="ModelOnly" class="validation-summary-errors mb-3"></div>
+    <div class="row g-3"><div class="col-md-8"><label asp-for="AppointmentId" class="form-label">Completed appointment</label><select asp-for="AppointmentId" class="form-select"><option value="">Select an appointment</option>@foreach (var appt in Model.EligibleAppointments) { <option value="@appt.Id">@appt.Label</option> }</select><span asp-validation-for="AppointmentId" class="field-validation-error"></span>@if (Model.EligibleAppointments.Count == 0) { <div class="form-text">There are no completed appointments without a bill.</div> }</div>
+    <div class="col-md-4"><label asp-for="DiscountAmount" class="form-label">Discount (INR)</label><input asp-for="DiscountAmount" class="form-control" type="number" min="0" step="0.01" /><span asp-validation-for="DiscountAmount" class="field-validation-error"></span></div>
+    <div class="col-12"><label asp-for="Description" class="form-label">Invoice description</label><input asp-for="Description" class="form-control" /><span asp-validation-for="Description" class="field-validation-error"></span></div></div>
+    <div class="action-row mt-4"><button class="btn btn-primary" type="submit" disabled="@(Model.EligibleAppointments.Count == 0)">Generate invoice</button><a class="btn btn-light" asp-action="Index">Cancel</a></div>
+</form></section>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }
